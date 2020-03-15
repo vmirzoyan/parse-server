@@ -15,7 +15,8 @@ FROM node:lts-alpine as release
 RUN apk update; \
   apk add git;
 
-VOLUME /parse-server/cloud /parse-server/config
+#VOLUME /parse-server/cloud /parse-server/config
+VOLUME /parse-server/config
 
 WORKDIR /parse-server
 
