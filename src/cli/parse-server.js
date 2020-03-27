@@ -1,8 +1,3 @@
-require('@google-cloud/trace-agent').start({
-  projectId: process.env.GCP_PROJECT_ID,
-  keyFilename: process.env.GCP_NOTIFICATION_HUB_TOPIC
-});
-
 /* eslint-disable no-console */
 import ParseServer from '../index';
 import definitions from './definitions/parse-server';
