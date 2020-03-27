@@ -5,6 +5,11 @@ import cluster from 'cluster';
 import os from 'os';
 import runner from './utils/runner';
 
+require('@google-cloud/trace-agent').start({
+  projectId: process.env.GCP_PROJECT_ID,
+  keyFilename: process.env.GCP_NOTIFICATION_HUB_TOPIC
+});
+
 const help = function() {
   console.log('  Get Started guide:');
   console.log('');
