@@ -5,7 +5,7 @@ RUN apk update; \
   apk add git;
 WORKDIR /tmp
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY . .
 RUN npm run build
 
