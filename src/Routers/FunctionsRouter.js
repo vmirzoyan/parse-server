@@ -216,7 +216,7 @@ export class FunctionsRouter extends PromiseRouter {
               return theFunction(request, { message });
             })
             .then(success, error)
-            .then(() => {
+            .then(async () => {
               request.traceRoot.endSpan();
               await sleep(10);
             })
