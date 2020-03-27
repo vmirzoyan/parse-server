@@ -1,5 +1,6 @@
 require('@google-cloud/trace-agent').start({
   samplingRate: 20,
+  bufferSize: 1,
   projectId: process.env.GCP_PROJECT_ID,
   keyFilename: process.env.GCP_NOTIFICATION_HUB_TOPIC
 });
