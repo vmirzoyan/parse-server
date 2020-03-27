@@ -1,7 +1,8 @@
 require('@google-cloud/trace-agent').start({
   samplingRate: 20,
   bufferSize: 1,
-  projectId: process.env.GCP_PROJECT_ID
+  projectId: process.env.GCP_PROJECT_ID,
+  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
 });
 
 /* eslint-disable no-console */
