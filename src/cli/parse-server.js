@@ -1,12 +1,3 @@
-require('@google-cloud/profiler').start({
-  serviceContext: {
-      service: 'tradebase-server',
-      version: '1.0.0'
-  },
-  logLevel: 0,
-  projectId: process.env.GCP_PROJECT_ID
-});
-
 require('@google-cloud/trace-agent').start({
   projectId: process.env.GCP_PROJECT_ID,
   keyFilename: process.env.GCP_NOTIFICATION_HUB_TOPIC
