@@ -211,11 +211,9 @@ export class FunctionsRouter extends PromiseRouter {
             }
           );
           return Promise.resolve()
-            .then(async () => {
-              var returnVal = theFunction(request, { message });
-              rootSpan.endSpan();
-              await sleep(10000);
-              return returnVal;
+            .then(() => {
+              request.traceRoot = rootSpan;
+              return theFunction(request, { message });
             })
             .then(success, error);
         });
