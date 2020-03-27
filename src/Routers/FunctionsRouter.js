@@ -215,7 +215,12 @@ export class FunctionsRouter extends PromiseRouter {
               request.traceRoot = rootSpan;
               return theFunction(request, { message });
             })
-            .then(success, error);
+            .then(success, error)
+            .then(() => {
+              request.traceRoot.endSpan();
+              await sleep(10);
+              return Promise.resolve();
+            })
         });
 
     });
