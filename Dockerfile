@@ -22,7 +22,8 @@ WORKDIR /parse-server
 
 COPY package*.json ./
 
-RUN npm ci --production --ignore-scripts
+#RUN npm ci --production --ignore-scripts
+RUN npm install --production --ignore-scripts
 
 COPY bin bin
 COPY public_html public_html
