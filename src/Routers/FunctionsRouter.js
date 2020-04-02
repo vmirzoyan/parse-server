@@ -3,6 +3,8 @@
 var Parse = require('parse/node').Parse,
   triggers = require('../triggers');
 
+const tracer = require('@google-cloud/trace-agent').get();
+
 import PromiseRouter from '../PromiseRouter';
 import { promiseEnforceMasterKeyAccess } from '../middlewares';
 import { jobStatusHandler } from '../StatusHandler';
@@ -27,6 +29,10 @@ function parseObject(obj) {
 
 function parseParams(params) {
   return _.mapValues(params, parseObject);
+}
+
+const sleep = (milliseconds) => {
+  return new Promise(resolve => setTimeout(resolve, milliseconds))
 }
 
 export class FunctionsRouter extends PromiseRouter {
@@ -124,88 +130,99 @@ export class FunctionsRouter extends PromiseRouter {
   }
 
   static handleCloudFunction(req) {
-    const functionName = req.params.functionName;
-    const applicationId = req.config.applicationId;
-    const theFunction = triggers.getFunction(functionName, applicationId);
-    const theValidator = triggers.getValidator(
-      req.params.functionName,
-      applicationId
-    );
-    if (!theFunction) {
-      throw new Parse.Error(
-        Parse.Error.SCRIPT_FAILED,
-        `Invalid function: "${functionName}"`
-      );
-    }
-    let params = Object.assign({}, req.body, req.query);
-    params = parseParams(params);
-    const request = {
-      params: params,
-      master: req.auth && req.auth.isMaster,
-      user: req.auth && req.auth.user,
-      installationId: req.info.installationId,
-      log: req.config.loggerController,
-      headers: req.config.headers,
-      ip: req.config.ip,
-      functionName,
-    };
+    
+    return tracer.runInRootSpan({ name: req.params.functionName }, async rootSpan => {
 
-    if (theValidator && typeof theValidator === 'function') {
-      var result = theValidator(request);
-      if (!result) {
-        throw new Parse.Error(
-          Parse.Error.VALIDATION_ERROR,
-          'Validation failed.'
+        const functionName = req.params.functionName;
+        const applicationId = req.config.applicationId;
+        const theFunction = triggers.getFunction(functionName, applicationId);
+        const theValidator = triggers.getValidator(
+          req.params.functionName,
+          applicationId
         );
-      }
-    }
-
-    return new Promise(function(resolve, reject) {
-      const userString =
-        req.auth && req.auth.user ? req.auth.user.id : undefined;
-      const cleanInput = logger.truncateLogMessage(JSON.stringify(params));
-      const { success, error, message } = FunctionsRouter.createResponseObject(
-        result => {
-          try {
-            const cleanResult = logger.truncateLogMessage(
-              JSON.stringify(result.response.result)
+        if (!theFunction) {
+          throw new Parse.Error(
+            Parse.Error.SCRIPT_FAILED,
+            `Invalid function: "${functionName}"`
+          );
+        }
+        let params = Object.assign({}, req.body, req.query);
+        params = parseParams(params);
+        const request = {
+          params: params,
+          master: req.auth && req.auth.isMaster,
+          user: req.auth && req.auth.user,
+          installationId: req.info.installationId,
+          log: req.config.loggerController,
+          headers: req.config.headers,
+          ip: req.config.ip,
+          functionName,
+        };
+    
+        if (theValidator && typeof theValidator === 'function') {
+          var result = theValidator(request);
+          if (!result) {
+            throw new Parse.Error(
+              Parse.Error.VALIDATION_ERROR,
+              'Validation failed.'
             );
-            logger.info(
-              `Ran cloud function ${functionName} for user ${userString} with:\n  Input: ${cleanInput}\n  Result: ${cleanResult}`,
-              {
-                functionName,
-                params,
-                user: userString,
-              }
-            );
-            resolve(result);
-          } catch (e) {
-            reject(e);
-          }
-        },
-        error => {
-          try {
-            logger.error(
-              `Failed running cloud function ${functionName} for user ${userString} with:\n  Input: ${cleanInput}\n  Error: ` +
-                JSON.stringify(error),
-              {
-                functionName,
-                error,
-                params,
-                user: userString,
-              }
-            );
-            reject(error);
-          } catch (e) {
-            reject(e);
           }
         }
-      );
-      return Promise.resolve()
-        .then(() => {
-          return theFunction(request, { message });
-        })
-        .then(success, error);
+    
+        return new Promise(function(resolve, reject) {
+          const userString =
+            req.auth && req.auth.user ? req.auth.user.id : undefined;
+          const cleanInput = logger.truncateLogMessage(JSON.stringify(params));
+          const { success, error, message } = FunctionsRouter.createResponseObject(
+            result => {
+              try {
+                const cleanResult = logger.truncateLogMessage(
+                  JSON.stringify(result.response.result)
+                );
+                logger.info(
+                  `Ran cloud function ${functionName} for user ${userString} with:\n  Input: ${cleanInput}\n  Result: ${cleanResult}`,
+                  {
+                    functionName,
+                    params,
+                    user: userString,
+                  }
+                );
+                resolve(result);
+              } catch (e) {
+                reject(e);
+              }
+            },
+            error => {
+              try {
+                logger.error(
+                  `Failed running cloud function ${functionName} for user ${userString} with:\n  Input: ${cleanInput}\n  Error: ` +
+                    JSON.stringify(error),
+                  {
+                    functionName,
+                    error,
+                    params,
+                    user: userString,
+                  }
+                );
+                reject(error);
+              } catch (e) {
+                reject(e);
+              }
+            }
+          );
+          return Promise.resolve()
+            .then(() => {
+              request.traceRoot = rootSpan;
+              return theFunction(request, { message });
+            })
+            .then(success, error)
+            .then(async () => {
+              request.traceRoot.endSpan();
+              await sleep(10);
+            })
+        });
+
     });
+        
   }
 }

@@ -1,3 +1,10 @@
+require('@google-cloud/trace-agent').start({
+  samplingRate: 20,
+  bufferSize: 1,
+  projectId: process.env.GCP_PROJECT_ID,
+  keyFilename: process.env.GOOGLE_APPLICATION_CREDENTIALS
+});
+
 /* eslint-disable no-console */
 import ParseServer from '../index';
 import definitions from './definitions/parse-server';

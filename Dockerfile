@@ -5,7 +5,7 @@ RUN apk update; \
   apk add git;
 WORKDIR /tmp
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY . .
 RUN npm run build
 
@@ -15,13 +15,15 @@ FROM node:lts-alpine as release
 RUN apk update; \
   apk add git;
 
-VOLUME /parse-server/cloud /parse-server/config
+#VOLUME /parse-server/cloud /parse-server/config
+VOLUME /parse-server/config
 
 WORKDIR /parse-server
 
 COPY package*.json ./
 
-RUN npm ci --production --ignore-scripts
+#RUN npm ci --production --ignore-scripts
+RUN npm install --production --ignore-scripts
 
 COPY bin bin
 COPY public_html public_html
