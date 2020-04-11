@@ -19,6 +19,8 @@
   ],
   "license": "BSD-3-Clause",
   "dependencies": {
+    "@google-cloud/tasks": "^2.0.0",
+    "yargs": "^15.0.0",
     "@google-cloud/trace-agent": "4.2.5",
     "@google-cloud/pubsub": "1.6.0",
     "@apollographql/graphql-playground-html": "1.6.24",
