@@ -19,6 +19,7 @@
   ],
   "license": "BSD-3-Clause",
   "dependencies": {
+    "parse-server-azure-push": "1.0.2",
     "@parse/gcs-files-adapter": "1.1.2",
     "gtoken": "^5.0.0",
     "@google-cloud/tasks": "^2.0.0",
