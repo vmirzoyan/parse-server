@@ -49,8 +49,8 @@ runner({
   start: function(program, options, logOptions) {
 
     const push = {
-      HubName: process.env.MS_NotificationHubName,
-      ConnectionString: process.env.MS_NotificationHubConnectionString
+      HubName: process.env.MS_NOTIFICATION_HUB_NAME,
+      ConnectionString: process.env.MS_NOTIFICATION_HUB_CONNECTION_STRING
     }; 
     if(!push.HubName || !push.ConnectionString)
       console.error(`Missing Azure Push Adapter properties. Push Notifications will not work.`);
