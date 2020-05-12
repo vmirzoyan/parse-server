@@ -47,6 +47,20 @@ runner({
   help,
   usage: '[options] <path/to/configuration.json>',
   start: function(program, options, logOptions) {
+
+    const push = {
+      HubName: process.env.MS_NotificationHubName,
+      ConnectionString: process.env.MS_NotificationHubConnectionString
+    }; 
+    if(!push.HubName || !push.ConnectionString)
+      console.error(`Missing Azure Push Adapter properties. Push Notifications will not work.`);
+    else {
+      var AzurePushAdapter = require('parse-server-azure-push');
+      options.push = { 
+        adapter: AzurePushAdapter(push)
+      }
+    }
+    
     if (!options.appId || !options.masterKey) {
       program.outputHelp();
       console.error('');

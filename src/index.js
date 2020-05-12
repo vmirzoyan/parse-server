@@ -14,20 +14,6 @@ import { ParseGraphQLServer } from './GraphQL/ParseGraphQLServer';
 
 // Factory function
 const _ParseServer = function(options: ParseServerOptions) {
-
-  const push = {
-    HubName: process.env.MS_NotificationHubName,
-    ConnectionString: process.env.MS_NotificationHubConnectionString
-  };
-  
-  if(!push.HubName || !push.ConnectionString)
-    console.log(`Missing Azure Push Adapter properties. Push Notifications will not work.`);
-  else {
-    var AzurePushAdapter = require('parse-server-azure-push');
-    options.push = { 
-      adapter: AzurePushAdapter(push)
-    }
-  }
   const server = new ParseServer(options);
   return server.app;
 };
