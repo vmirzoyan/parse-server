@@ -1,6 +1,5 @@
 'use strict'
 
-const Parse = require('parse/node').Parse;
 const https = require('https');
 const merge = require('deeply');
 const version = '2015-08';
@@ -23,7 +22,7 @@ module.exports = pushConfig => {
                 })
             };
 
-            let sendPromise = new Parse.Promise();
+            let sendPromise = new Promise();
             let request = https.request(options);
             multipart(handles, payload, headers['Content-Type']).pipe(request);
             request.on('response', (res) => {
