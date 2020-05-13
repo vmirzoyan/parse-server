@@ -1,6 +1,5 @@
 'use strict'
 
-const Parse = require('parse/node').Parse;
 const nhClientFactory = require('./NHClient');
 const classifyInstallations = require('./classifyInstallations');
 const nhConfig = require('./NHConfig');
@@ -35,13 +34,13 @@ module.exports = function AzurePushAdapter(pushConfig) {
         let payload = sender.generatePayload(data);
         console.log('Sending notification "' + payload + '" to ' + devices.length + ' ' + pushType + ' devices');
 
-        sendPromises.push(Parse.Promise.when(
+        sendPromises.push(Promise.all(
           chunk(devices).map(chunkOfDevices => { 
             return nhClient.bulkSend(chunkOfDevices, headers, payload); 
           })
         ));
       }
-      return Parse.Promise.when(sendPromises);
+      return Promise.all(sendPromises);
     }
   }
   return api;
