@@ -63,12 +63,12 @@ runner({
 
     options.push = {
       android: {
-        apiKey: 'AAAAABQcaZo:APA91bGnOPbeXVJ2_ixKTrxPeOnuuOV1RbsfqAgVccbbczo_3BrPKYOL965RZQ8d1rzan_uADPB39d8F2QPGmuEer4g4mPiJNgRPdDcZL7Yf5ZJeGIsfICa4Tcbkp1vAUAQWUGvRWLi5'
+        apiKey: process.env.FCM_API_KEY
       },
       ios: {
-        pfx: '/prod-apn-02172020.p12',
-        passphrase: 'Trade!!123', // optional password to your p12/PFX
-        bundleId: 'com.epilix.longfellowdev',
+        pfx: process.env.APN_PUSH_CERT_FILE,
+        passphrase: process.env.APN_PUSH_CERT_PASSPHRASE, // optional password to your p12/PFX
+        bundleId: process.env.IOS_APP_BUNDLE_ID,
         production: false
       }
     }    
