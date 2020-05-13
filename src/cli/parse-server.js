@@ -60,6 +60,18 @@ runner({
     //     adapter: AzurePushAdapter(push)
     //   }
     // }
+
+    options.push = {
+      android: {
+        apiKey: 'AAAAABQcaZo:APA91bGnOPbeXVJ2_ixKTrxPeOnuuOV1RbsfqAgVccbbczo_3BrPKYOL965RZQ8d1rzan_uADPB39d8F2QPGmuEer4g4mPiJNgRPdDcZL7Yf5ZJeGIsfICa4Tcbkp1vAUAQWUGvRWLi5'
+      },
+      ios: {
+        pfx: '/file/path/to/XXX.p12',
+        passphrase: '', // optional password to your p12/PFX
+        bundleId: '',
+        production: false
+      }
+    }    
     
     if (!options.appId || !options.masterKey) {
       program.outputHelp();
