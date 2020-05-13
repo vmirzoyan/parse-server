@@ -22,23 +22,24 @@ module.exports = pushConfig => {
                 })
             };
 
-            let sendPromise = new Promise();
-            let request = https.request(options);
-            multipart(handles, payload, headers['Content-Type']).pipe(request);
-            request.on('response', (res) => {
-                console.log(res.statusCode + ' ' + res.statusMessage + ', sent ' + handles.length +  ' ' + options.headers['ServiceBusNotification-Format'] + ' notifications');
-                if (res.statusCode != 201) {
-                    let err = [];
-                    res.on('data', chunk => err.push(chunk))
-                       .on('end', _ => reportError(Buffer.concat(err).toString()));
-                } else 
-                    sendPromise.resolve(res.statusCode);
-            }).on('error', reportError);
-
-            function reportError(err) {
-                console.error(err);
-                sendPromise.reject(err);
-            }
+            let sendPromise = new Promise((resolve, reject) => {
+                let request = https.request(options);
+                multipart(handles, payload, headers['Content-Type']).pipe(request);
+                request.on('response', (res) => {
+                    console.log(res.statusCode + ' ' + res.statusMessage + ', sent ' + handles.length +  ' ' + options.headers['ServiceBusNotification-Format'] + ' notifications');
+                    if (res.statusCode != 201) {
+                        let err = [];
+                        res.on('data', chunk => err.push(chunk))
+                           .on('end', _ => reportError(Buffer.concat(err).toString()));
+                    } else 
+                        resolve(res.statusCode);
+                }).on('error', reportError);
+    
+                function reportError(err) {
+                    console.error(err);
+                    reject(err);
+                }
+            });
 
             return sendPromise;
         }
