@@ -48,30 +48,30 @@ runner({
   usage: '[options] <path/to/configuration.json>',
   start: function(program, options, logOptions) {
 
-    // const push = {
-    //   HubName: process.env.MS_NOTIFICATION_HUB_NAME,
-    //   ConnectionString: process.env.MS_NOTIFICATION_HUB_CONNECTION_STRING
-    // }; 
-    // if(!push.HubName || !push.ConnectionString)
-    //   console.error(`Missing Azure Push Adapter properties. Push Notifications will not work.`);
-    // else {
-    //   var AzurePushAdapter = require('parse-server-azure-push');
-    //   options.push = { 
-    //     adapter: AzurePushAdapter(push)
-    //   }
-    // }
-
-    options.push = {
-      android: {
-        apiKey: process.env.FCM_API_KEY
-      },
-      ios: {
-        pfx: process.env.APN_PUSH_CERT_FILE,
-        passphrase: process.env.APN_PUSH_CERT_PASSPHRASE, // optional password to your p12/PFX
-        bundleId: process.env.IOS_APP_BUNDLE_ID,
-        production: false
+    const push = {
+      HubName: process.env.MS_NOTIFICATION_HUB_NAME,
+      ConnectionString: process.env.MS_NOTIFICATION_HUB_CONNECTION_STRING
+    }; 
+    if(!push.HubName || !push.ConnectionString)
+      console.error(`Missing Azure Push Adapter properties. Push Notifications will not work.`);
+    else {
+      var AzurePushAdapter = require('parse-server-azure-push');
+      options.push = { 
+        adapter: AzurePushAdapter(push)
       }
-    }    
+    }
+
+    // options.push = {
+    //   android: {
+    //     apiKey: process.env.FCM_API_KEY
+    //   },
+    //   ios: {
+    //     pfx: process.env.APN_PUSH_CERT_FILE,
+    //     passphrase: process.env.APN_PUSH_CERT_PASSPHRASE, // optional password to your p12/PFX
+    //     bundleId: process.env.IOS_APP_BUNDLE_ID,
+    //     production: false
+    //   }
+    // }    
     
     if (!options.appId || !options.masterKey) {
       program.outputHelp();
