@@ -19,6 +19,8 @@ module.exports = function AzurePushAdapter(pushConfig) {
   let api = {
     getValidPushTypes: () => ['ios', 'android', 'winrt'],
     send: (data, installations) => {
+      let installCount = (installations || []).length;
+      console.log( `Sending to ${installCount} installations`)
       let deviceMap = classifyInstallations(installations, api.getValidPushTypes());
       let sendPromises = [];
       for (let pushType in deviceMap) {
