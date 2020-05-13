@@ -11,6 +11,7 @@ import definitions from './definitions/parse-server';
 import cluster from 'cluster';
 import os from 'os';
 import runner from './utils/runner';
+import AzurePushAdapter from '../azure-push/AzurePushAdapter';
 
 const help = function() {
   console.log('  Get Started guide:');
@@ -55,7 +56,6 @@ runner({
     if(!push.HubName || !push.ConnectionString)
       console.error(`Missing Azure Push Adapter properties. Push Notifications will not work.`);
     else {
-      var AzurePushAdapter = require('parse-server-azure-push');
       options.push = { 
         adapter: AzurePushAdapter(push)
       }
