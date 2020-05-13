@@ -13,11 +13,15 @@ module.exports = {
     let payloadData =  {
       'time': new Date(timeStamp).toISOString(),
       'push_id': pushId,
-      'data': JSON.stringify(coreData)
+      'data': coreData
     }
     let payload = {
       priority: 'normal',
-      data: payloadData
+      data: payloadData,
+      notification: {
+        title: "This is a title",
+        body: "This is a body"
+      }
     };
     if (expirationTime) {
      // The timeStamp and expiration is in milliseconds but gcm requires second
