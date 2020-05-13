@@ -6,10 +6,6 @@ const GCMTimeToLiveMax = 4 * 7 * 24 * 60 * 60; // GCM allows a max of 4 weeks
 
 module.exports = {
   generatePayload: (parseData, time) => {
-
-    const d = JSON.stringify(parseData);
-    console.log(`ParseData: ${d}`);
-
     let coreData = parseData.data;
     let expirationTime = parseData.expiration_time;
     let pushId = generateObjectId();
