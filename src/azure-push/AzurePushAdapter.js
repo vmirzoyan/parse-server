@@ -32,7 +32,7 @@ module.exports = function AzurePushAdapter(pushConfig) {
         }
         let headers = sender.generateHeaders(data);
         let payload = sender.generatePayload(data);
-        console.log('Sending notification "' + payload + '" to ' + devices.length + ' ' + pushType + ' devices');
+        //console.log('Sending notification "' + payload + '" to ' + devices.length + ' ' + pushType + ' devices');
 
         sendPromises.push(Promise.all(
           chunk(devices).map(chunkOfDevices => { 
