@@ -19,6 +19,8 @@
   ],
   "license": "BSD-3-Clause",
   "dependencies": {
+    "deeply": "^2.0.0",
+    "form-data": "1.0.0-rc4",
     "@parse/gcs-files-adapter": "1.1.2",
     "gtoken": "^5.0.0",
     "@google-cloud/tasks": "^2.0.0",

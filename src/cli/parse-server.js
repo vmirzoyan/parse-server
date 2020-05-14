@@ -11,6 +11,7 @@ import definitions from './definitions/parse-server';
 import cluster from 'cluster';
 import os from 'os';
 import runner from './utils/runner';
+import AzurePushAdapter from '../azure-push/AzurePushAdapter';
 
 const help = function() {
   console.log('  Get Started guide:');
@@ -47,6 +48,31 @@ runner({
   help,
   usage: '[options] <path/to/configuration.json>',
   start: function(program, options, logOptions) {
+
+    const push = {
+      HubName: process.env.MS_NOTIFICATION_HUB_NAME,
+      ConnectionString: process.env.MS_NOTIFICATION_HUB_CONNECTION_STRING
+    }; 
+    if(!push.HubName || !push.ConnectionString)
+      console.error(`Missing Azure Push Adapter properties. Push Notifications will not work.`);
+    else {
+      options.push = { 
+        adapter: AzurePushAdapter(push)
+      }
+    }
+
+    // options.push = {
+    //   android: {
+    //     apiKey: process.env.FCM_API_KEY
+    //   },
+    //   ios: {
+    //     pfx: process.env.APN_PUSH_CERT_FILE,
+    //     passphrase: process.env.APN_PUSH_CERT_PASSPHRASE, // optional password to your p12/PFX
+    //     bundleId: process.env.IOS_APP_BUNDLE_ID,
+    //     production: false
+    //   }
+    // }    
+    
     if (!options.appId || !options.masterKey) {
       program.outputHelp();
       console.error('');
