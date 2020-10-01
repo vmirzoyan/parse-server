@@ -49,6 +49,7 @@ runner({
   usage: '[options] <path/to/configuration.json>',
   start: function(program, options, logOptions) {
 
+    // Setup push notifications
     const push = {
       HubName: process.env.MS_NOTIFICATION_HUB_NAME,
       ConnectionString: process.env.MS_NOTIFICATION_HUB_CONNECTION_STRING
@@ -60,18 +61,27 @@ runner({
         adapter: AzurePushAdapter(push)
       }
     }
-
-    // options.push = {
-    //   android: {
-    //     apiKey: process.env.FCM_API_KEY
-    //   },
-    //   ios: {
-    //     pfx: process.env.APN_PUSH_CERT_FILE,
-    //     passphrase: process.env.APN_PUSH_CERT_PASSPHRASE, // optional password to your p12/PFX
-    //     bundleId: process.env.IOS_APP_BUNDLE_ID,
-    //     production: false
-    //   }
-    // }    
+    
+    // Setup email module for password reset links
+    const email = {
+      module: process.env.PARSE_SERVER_EMAIL_ADAPTER,
+      fromAddress: process.env.MAILGUN_FROM_ADDRESS,
+      domain: process.env.MAILGUN_DOMAIN,
+      apiKey: process.env.MAILGUN_API_KEY
+    };
+    if (!email.module || !email.fromAddress || !email.domain || email.apiKey) {
+      console.error("Missing one or more valid email configuration properties.")
+    }
+    else {
+      options.emailAdapter = {
+        module: email.module,
+        options: {
+          fromAddress: email.fromAddress,
+          domain: email.domain,
+          apiKey: email.apiKey,
+        }      
+      }
+    }
     
     if (!options.appId || !options.masterKey) {
       program.outputHelp();
