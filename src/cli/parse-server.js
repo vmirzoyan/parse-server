@@ -69,7 +69,7 @@ runner({
       domain: process.env.MAILGUN_DOMAIN,
       apiKey: process.env.MAILGUN_API_KEY
     };
-    if (!email.module || !email.fromAddress || !email.domain || email.apiKey) {
+    if (!email.module || !email.fromAddress || !email.domain || !email.apiKey) {
       console.error("Missing one or more valid email configuration properties.")
     }
     else {
